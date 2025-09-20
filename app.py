@@ -2,7 +2,11 @@
 import streamlit as st
 import cv2
 import numpy as np
+import pandas as pd
 
+# -------------------------
+# Answer keys
+# -------------------------
 ANSWER_KEY_A = [
     0,2,2,2,2,0,2,2,2,2,
     0,3,3,0,1,0,2,3,1,1,
@@ -73,13 +77,11 @@ def evaluate_omr(image_file, set_choice='A'):
 # -------------------------
 # Streamlit UI
 # -------------------------
-
-# Custom CSS styling
 st.markdown(
     """
     <style>
     body {
-        background-color: #f4f4f9;
+        background-color: white;
     }
     .title {
         color: #4CAF50;
@@ -120,4 +122,8 @@ if uploaded_file is not None:
     else:
         st.success(f"Score: {result['score']} / {len(result['details'])}")
         st.markdown("### Detailed Results")
-        st.json(result['details'])
+
+        # Display as color-coded table
+        df = pd.DataFrame(result['details'])
+        df['correct'] = df['correct'].apply(lambda x: "✅ Correct" if x else "❌ Incorrect")
+        st.table(df)
